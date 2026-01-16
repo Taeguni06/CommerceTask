@@ -1,5 +1,6 @@
+package Step1;
+
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 
 public class Product {
     private String name;
