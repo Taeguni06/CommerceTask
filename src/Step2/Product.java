@@ -1,4 +1,4 @@
-package Step1;
+package Step2;
 
 import java.text.DecimalFormat;
 
@@ -20,7 +20,8 @@ public class Product {
     }
     public String getAmount() {
         DecimalFormat df = new DecimalFormat("#,###");
-        return df.format(amount); // 1,000,000 따옴표 추가 기능
+        String dfDone = df.format(amount); // 1,000,000 따옴표 추가 기능
+        return dfDone;
 
     }
     public String getDetail() {
