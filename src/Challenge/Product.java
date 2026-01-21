@@ -18,16 +18,34 @@ public class Product {
     public String getName() {
         return name;
     }
+
     public String getAmount() {
         DecimalFormat df = new DecimalFormat("#,###");
-        String dfDone = df.format(amount); // 1,000,000 따옴표 추가 기능
-        return dfDone;
+        // 1,000,000 따옴표 추가 기능
+        return df.format(amount);
 
     }
     public String getDetail() {
         return detail;
     }
+
     public int getQuantity() {
         return quantity;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

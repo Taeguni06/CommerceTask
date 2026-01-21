@@ -6,19 +6,7 @@ public class Customer {
     String account;
     int totalPrice;
 
-    public Customer(String name, String mail, int totalPrice) {
-        this.name = name;
-        this.mail = mail;
-        this.totalPrice = totalPrice;
-        if (totalPrice < 500000) {
-            account = "브론즈";
-        } else if (totalPrice >= 500000 && totalPrice < 1000000) {
-            account = "실버";
-        } else if (totalPrice >= 1000000 && totalPrice < 2000000) {
-            account = "골드";
-        } else if (totalPrice > 2000000) {
-            account = "플래티넘";
-        }
+    public Customer() {
     }
 
     public String getName() {
