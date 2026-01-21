@@ -26,4 +26,8 @@ public class Category {
     public List<Product> getProductList() {
         return this.products;
     }
+
+    public void removeProduct(int i) {
+        products.remove(i-1);
+    }
 }

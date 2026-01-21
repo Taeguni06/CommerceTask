@@ -1,6 +1,7 @@
 package Challenge;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -41,24 +42,29 @@ public class CommerceSystem {
 
     public void start() {
         while (true) {
-            displayMainMenu();
-            int choice = scanner.nextInt();
-            scanner.nextLine();
+            try {
+                displayMainMenu();
+                int choice = scanner.nextInt();
+                scanner.nextLine();
 
-            if (choice == 0) {
-                System.out.println("커머스 플랫폼을 종료합니다.");
-                break;
-            } else if (choice > 0 && choice <= categories.size()) {
-                // 선택한 카테고리로 진입 (인덱스는 선택번호 - 1)
-                showCategoryDetail(categories.get(choice - 1));
-            } else if (choice == 7) {
-                showBasket();
-            } else if (choice == 8) {
-                reQuestCancel();
-            } else if (choice == 9) {
-                adminStart();
-            } else {
-                System.out.println("잘못된 입력입니다. 다시 선택해주세요.");
+                if (choice == 0) {
+                    System.out.println("커머스 플랫폼을 종료합니다.");
+                    break;
+                } else if (choice > 0 && choice <= categories.size()) {
+                    // 선택한 카테고리로 진입 (인덱스는 선택번호 - 1)
+                    showCategoryDetail(categories.get(choice - 1));
+                } else if (choice == 7) {
+                    showBasket();
+                } else if (choice == 8) {
+                    reQuestCancel();
+                } else if (choice == 9) {
+                    adminStart();
+                } else {
+                    System.out.println("잘못된 입력입니다. 다시 선택해주세요.");
+                }
+            } catch (Exception e) {
+                System.out.println("잘못된 입력입니다.");
+                scanner.next();
             }
         }
     }
@@ -86,6 +92,7 @@ public class CommerceSystem {
                 Product p = products.get(i);
                 System.out.println((i + 1) + ". " + p.getName() + " | " + p.getPrice() + "원 | " + p.getDetail() + " | 재고: " + p.getQuantity() + "개");
             }
+
             System.out.println("0. 뒤로가기");
             System.out.print("입력: ");
 
@@ -102,10 +109,12 @@ public class CommerceSystem {
 
                 System.out.println("위 상품을 장바구니에 추가하시겠습니까?\n" +
                         "1. 확인        0. 취소");
+                System.out.print("입력: ");
                 int action = scanner.nextInt();
                 switch (action) {
                     case 1:
                         System.out.println("\n장바구니에 담을 수량을 입력해주세요");
+                        System.out.print("입력: ");
                         int volume = scanner.nextInt();
                         basket.setVolume(volume);
                         if (volume <= selected.getQuantity()) {
@@ -126,7 +135,7 @@ public class CommerceSystem {
     }
 
     private void showBasket() {
-        System.out.println("[ 장바구니 ]");
+        System.out.println("\n[ 장바구니 ]");
         while (true) {
             List<Product> productList = basket.getProductList();
             if (basket.getTotalAmount().equals("0")) {
@@ -142,7 +151,7 @@ public class CommerceSystem {
             System.out.println("1. 주문하기");
 
             System.out.println("0. 뒤로가기");
-
+            System.out.print("입력: ");
             int choice = scanner.nextInt();
             if (choice == 0) {
                 break;
@@ -168,38 +177,46 @@ public class CommerceSystem {
     public void adminStart() {
         System.out.println("[ 3회 실패시 메인 메뉴로 돌아갑니다. ]");
         int j = 1;
-        while (true) {
-            System.out.print("비밀번호를 입력해주세요: ");
-            String password = scanner.nextLine();
-            if (password.equals("admin123")) {
-                adminMainMenu();
-                int choice = scanner.nextInt();
+        try {
+            while (true) {
+                System.out.print("비밀번호를 입력해주세요: ");
+                System.out.print("입력: ");
+                String password = scanner.nextLine();
+                if (password.equals("admin123")) {
+                    adminMainMenu();
+                    System.out.print("입력: ");
+                    int choice = scanner.nextInt();
 
-                if (choice == 0) {
-                    System.out.println("관리자 모드를 종료합니다.");
-                    break;
-                } else if (choice == 1) {
-                    for (int i = 0; i < categories.size(); i++) {
-                        System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
+                    if (choice == 0) {
+                        System.out.println("관리자 모드를 종료합니다.");
+                        break;
+                    } else if (choice == 1) {
+                        addProduct(categories.get(categoryFinder()));
+                        break;
+                    } else if (choice == 2) {
+                        fixProduct(categories.get(categoryFinder()));
+                        break;
+                    } else if (choice == 3) {
+                        System.out.println("삭제할 상품의 카테고리를 입력해주세요.");
+                        removeProduct(categories.get(categoryFinder()));
+                        break;
+                    } else if (choice == 4) {
+                        productCheck();
+                        break;
+                    } else {
+                        System.out.println("잘못된 입력입니다. 다시 선택해주세요.");
                     }
-                    int action = scanner.nextInt();
-                    addProduct(categories.get(action - 1));
-                } else if (choice == 2) {
-                    for (int i = 0; i < categories.size(); i++) {
-                        System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
-                    }
-                    int action = scanner.nextInt();
-                    fixProduct(categories.get(action - 1));
                 } else {
-                    System.out.println("잘못된 입력입니다. 다시 선택해주세요.");
-                }
-            } else {
-                System.out.println("비밀번호가 틀렸습니다. (" + j + "회)");
-                j++;
-                if (j == 4) {
-                    break;
+                    System.out.println("비밀번호가 틀렸습니다. (" + j + "회)");
+                    j++;
+                    if (j == 4) {
+                        break;
+                    }
                 }
             }
+        } catch (Exception e) {
+            System.out.println("잘못된 입력입니다.");
+            scanner.next();
         }
     }
 
@@ -213,29 +230,35 @@ public class CommerceSystem {
     }
 
     private void addProduct(Category category) {
-        scanner.nextLine(); // 버퍼에 남은 엔터 제거
-        System.out.println("\n[ " + category.getCategoryName() + " 카테고리 ]");
+        try {
+            scanner.nextLine();
+            System.out.println("\n[ " + category.getCategoryName() + " 카테고리 ]");
 
-        System.out.print("상품명을 입력해주세요: ");
-        String name = scanner.nextLine(); // 공백 포함 가능하게 수정
+            System.out.print("상품명을 입력해주세요: ");
+            String name = scanner.nextLine();
 
-        System.out.print("가격을 입력해주세요: ");
-        int price = scanner.nextInt();
+            System.out.print("가격을 입력해주세요: ");
+            int price = scanner.nextInt();
 
-        scanner.nextLine(); // 숫자 뒤 엔터 제거
-        System.out.print("상품 설명을 입력해주세요: ");
-        String detail = scanner.nextLine();
+            scanner.nextLine();
+            System.out.print("상품 설명을 입력해주세요: ");
+            String detail = scanner.nextLine();
 
-        System.out.print("재고 수량을 입력해주세요: ");
-        int quantity = scanner.nextInt();
-        scanner.nextLine(); // 엔터 제거
+            System.out.print("재고 수량을 입력해주세요: ");
+            int quantity = scanner.nextInt();
+            scanner.nextLine();
 
-        category.addProduct(new Product(name, price, detail, quantity));
-        System.out.println(name + " 상품이 " + category.getCategoryName() + "카테고리에 추가되었습니다.");
+            category.addProduct(new Product(name, price, detail, quantity));
+            System.out.println(name + " 상품이 " + category.getCategoryName() + "카테고리에 추가되었습니다.");
+        }
+        catch (Exception e) {
+            System.out.println("잘못된 입력입니다.");
+            scanner.next();
+        }
     }
 
     private void fixProduct(Category category) {
-        scanner.nextLine(); // 버퍼 비우기
+        scanner.nextLine();
         System.out.print("수정할 상품명을 입력해주세요: ");
         String targetName = scanner.nextLine();
 
@@ -250,6 +273,7 @@ public class CommerceSystem {
         if (targetProduct != null) {
             System.out.println("1. 가격 | 2. 설명 | 3. 재고수량");
             System.out.print("수정할 항목을 선택해주세요: ");
+            System.out.print("입력: ");
             int menu = scanner.nextInt();
             scanner.nextLine();
 
@@ -273,6 +297,56 @@ public class CommerceSystem {
         } else {
             System.out.println("존재하지 않는 상품입니다.");
         }
+    }
+
+    private void removeProduct(Category category) {
+
+        List<Product> products = category.getProductList();
+
+        for (int i = 0; i < products.size(); i++) {
+            Product p = products.get(i);
+            System.out.println((i + 1) + ". " + p.getName() + " | " + p.getPrice() + "원 | " + p.getDetail() + " | 재고: " + p.getQuantity() + "개");
+        }
+
+        System.out.println("삭제할 상품을 선택해주세요.");
+        System.out.print("입력: ");
+        int i = scanner.nextInt();
+        category.removeProduct(i);
+
+        System.out.println();
+    }
+
+    private void productCheck() {
+        while (true) {
+            for (Category c : categories) {
+                System.out.println("[ " + c.getCategoryName() + " ]");
+                List<Product> products = c.getProductList();
+
+                if (products.isEmpty()) {
+                    System.out.println("등록된 상품이 없습니다.");
+                } else {
+                    for (Product p : products) {
+                        System.out.println("- " + p.getName() + " | 가격: " + p.getPrice() +
+                                " | 재고: " + p.getQuantity() + "개");
+                    }
+                }
+            }
+            System.out.println("0. 뒤로가기");
+            System.out.print("입력: ");
+            String next = scanner.next();
+            if (next.equals("0")) {
+                break;
+            } else {
+                System.out.println("잘못된 입력입니다.");
+            }
+        }
+    }
+    private int categoryFinder() {
+        for (int i = 0; i < categories.size(); i++) {
+            System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
+        }
+        System.out.print("입력: ");
+        return scanner.nextInt() - 1;
     }
 }
 
