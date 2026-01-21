@@ -4,13 +4,13 @@ import java.text.DecimalFormat;
 
 public class Product {
     private String name;
-    private int amount;
+    private int price;
     private String detail;
     private int quantity;
 
-    Product(String name, int amount, String detail, int quantity) {
+    Product(String name, int price, String detail, int quantity) {
         this.name = name;
-        this.amount = amount;
+        this.price = price;
         this.detail = detail;
         this.quantity = quantity;
     }
@@ -19,10 +19,10 @@ public class Product {
         return name;
     }
 
-    public String getAmount() {
+    public String getPrice() {
         DecimalFormat df = new DecimalFormat("#,###");
         // 1,000,000 따옴표 추가 기능
-        return df.format(amount);
+        return df.format(price);
 
     }
     public String getDetail() {
@@ -37,8 +37,8 @@ public class Product {
         this.name = name;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
+    public void setPrice(int price) {
+        this.price = price;
     }
 
     public void setDetail(String detail) {

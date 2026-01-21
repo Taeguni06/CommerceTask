@@ -29,7 +29,7 @@ public class Basket {
     public void totalAmount(Product product) {
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-        int amount = Integer.parseInt(product.getAmount().replace(",", ""));
+        int amount = Integer.parseInt(product.getPrice().replace(",", ""));
 
         totalAmount += amount * volume;
 
