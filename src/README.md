@@ -1,7 +1,17 @@
-<h1 style="color: rosybrown"> Commerce Task </h1> password: admin123
+<h1 style="color: rosybrown"> Commerce Task </h1> 
 
+    src/
+    └── Challenge/
+    ├── Main.java
+    ├── CommerceSystem.java
+    ├── Product.java
+    ├── Category.java
+    ├── Basket.java
+    └── Customer.java (CustomerGrade 포함)
+password: admin123
 
 <h2 style="color: rosybrown"> 기능 </h2>
+
 
 <h3>카테고리별 상품 </h3>
 
@@ -30,7 +40,7 @@
 
     전체 상품 보기
 
-<h2 style="color: rosybrown">기본적으로 추가되어있는 상품</h2>
+<h2 style="color: rosybrown">초기 데이터</h2>
 
     "Galaxy S25", 1200000, "최신 안드로이드 스마트폰", 50
     
@@ -43,3 +53,19 @@
     "후드 티", 60000, "따뜻한 후드티", 100
     
     "사과 1박스", 30000, "꿀사과", 40
+
+<h2 style="color: rosybrown">적용 되는 할인율 및 등급</h2>
+
+    BRONZE: 50만원 미만,0%
+
+    SILVER: 50만원 ~ 100만원 미만,5%
+
+    GOLD: 100만원 ~ 200만원 미만,10%
+
+    PLATINUM: 200만원 이상,15%
+
+<h2 style="color: rosybrown">사용 기술</h2>
+
+    JAVA 25
+    Stream API & Lambda Expressions
+    Collections Framework (List, Map)

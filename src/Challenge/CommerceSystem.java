@@ -1,19 +1,17 @@
 package Challenge;
 
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static Challenge.CategoryType.*;
 
 public class CommerceSystem {
-    private Scanner scanner;
-    private List<Category> categories;
-    private Basket basket = new Basket();
-    private Customer customer = new Customer();
-    private Map<String, Customer> customerMap = new HashMap<>();
-    private DecimalFormat dF = new DecimalFormat("#,###");
+    private final Scanner scanner;
+    private final List<Category> categories;
+    private final Basket basket = new Basket();
+    private final Map<String, Customer> customerMap = new HashMap<>();
+    private final DecimalFormat dF = new DecimalFormat("#,###");
 
     CommerceSystem() {
         this.categories = new ArrayList<>();
@@ -186,7 +184,7 @@ public class CommerceSystem {
         if (!customerMap.containsKey(email)) {
             customerMap.put(email, new Customer(email));
         }
-        this.customer = customerMap.get(email);
+        Customer customer = customerMap.get(email);
 
         CustomerGrade grade = customer.getGrade();
         int discount = grade.discount(totalOrderPrice);
@@ -255,12 +253,13 @@ public class CommerceSystem {
     }
 
     private void adminMainMenu() {
-        System.out.println("[ 관리자 모드 ]\n" +
-                "1. 상품 추가\n" +
-                "2. 상품 수정\n" +
-                "3. 상품 삭제\n" +
-                "4. 전체 상품 현황\n" +
-                "0. 메인으로 돌아가기");
+        System.out.println("""
+                [ 관리자 모드 ]
+                1. 상품 추가
+                2. 상품 수정
+                3. 상품 삭제
+                4. 전체 상품 현황
+                0. 메인으로 돌아가기""");
     }
 
     private void addProduct(Category category) {
@@ -352,26 +351,44 @@ public class CommerceSystem {
 
     private void productCheck() {
         while (true) {
+            System.out.println("\n[ 전체 상품 현황 및 정렬 ]");
+            System.out.println("1. 기본 순서 보기");
+            System.out.println("2. 가격 낮은 순 보기");
+            System.out.println("3. 가격 높은 순 보기");
+            System.out.println("0. 뒤로가기");
+            System.out.print("입력: ");
+
+            String sortChoice = scanner.next();
+            if (sortChoice.equals("0")) break;
+
             for (Category c : categories) {
-                System.out.println("[ " + c.getCategoryName() + " ]");
+                System.out.println("\n< " + c.getCategoryName() + " >");
                 List<Product> products = c.getProductList();
 
                 if (products.isEmpty()) {
                     System.out.println("등록된 상품이 없습니다.");
-                } else {
-                    for (Product p : products) {
-                        System.out.println("- " + p.getName() + " | 가격: " + p.getPrice() +
-                                " | 재고: " + p.getQuantity() + "개");
-                    }
+                    continue;
                 }
-            }
-            System.out.println("0. 뒤로가기");
-            System.out.print("입력: ");
-            String next = scanner.next();
-            if (next.equals("0")) {
-                break;
-            } else {
-                System.out.println("잘못된 입력입니다.");
+
+                List<Product> sortedProducts = new ArrayList<>(products);
+
+                if (sortChoice.equals("2")) {
+                    // 가격 낮은 순
+                    sortedProducts = products.stream()
+                            .sorted(Comparator.comparingInt(p ->
+                                    Integer.parseInt(p.getPrice().replace(",", ""))))
+                            .collect(Collectors.toList());
+                } else if (sortChoice.equals("3")) {
+                    // 가격 높은 순
+                    sortedProducts = products.stream()
+                            .sorted(Comparator.comparingInt((Product p) ->
+                                    Integer.parseInt(p.getPrice().replace(",", ""))).reversed())
+                            .collect(Collectors.toList());
+                }
+
+                sortedProducts.forEach(p ->
+                        System.out.println("- " + p.getName() + " | 가격: " + p.getPrice() + "원 | 재고: " + p.getQuantity() + "개")
+                );
             }
         }
     }
