@@ -27,18 +27,17 @@ public class Basket {
         return this.products;
     }
 
-    //장바구니에서 특정 상품 제거 기능
+    // 장바구니에서 특정 상품 제거 기능
     public void removeProductStream(String productName) {
         int initialSize = products.size();
 
-        // 스트림 필터를 사용하여 해당 이름을 제외한 상품들만 다시 리스트로 수집
         this.products = products.stream()
                 .filter(p -> !p.getName().equalsIgnoreCase(productName))
                 .collect(Collectors.toCollection(ArrayList::new));
 
         if (products.size() < initialSize) {
             System.out.println(productName + " 상품이 제거되었습니다.");
-            recalculateTotal(); // 금액 재계산
+            recalculateTotal();
         } else {
             System.out.println("장바구니에 해당 상품이 없습니다.");
         }
@@ -53,6 +52,7 @@ public class Basket {
         this.formatedTotalAmount = decimalFormat.format(totalAmount);
     }
 
+    // 총 금액을 따옴표를 추가 후 출력
     public void totalAmount(Product product) {
         DecimalFormat decimalFormat = new DecimalFormat("#,###");
         int amount = Integer.parseInt(product.getPrice().replace(",", ""));

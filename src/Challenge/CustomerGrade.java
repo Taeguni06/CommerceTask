@@ -15,7 +15,6 @@ public enum CustomerGrade {
         this.grade = grade;
     }
 
-
     public int discount(int price) {
         // (가격 * 할인율)을 계산 후 정수로 변환하여 반환
         return (int) (price * dis);

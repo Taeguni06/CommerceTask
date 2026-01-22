@@ -19,7 +19,7 @@ public class CommerceSystem {
         setup();
     }
 
-    private void setup() {
+    private void setup() { // 기초 데이터
         Category electronics = new Category(ELECTRONICS);
         electronics.addProduct(new Product("Galaxy S25", 1200000, "최신 안드로이드 스마트폰", 50));
         electronics.addProduct(new Product("iPhone 15", 1350000, "Apple의 최신 스마트폰", 30));
@@ -37,7 +37,7 @@ public class CommerceSystem {
         categories.add(food);
     }
 
-    public void start() {
+    public void start() { // main에서의 실행 메서드
         while (true) {
             try {
                 displayMainMenu();
@@ -78,7 +78,7 @@ public class CommerceSystem {
         System.out.print("입력: ");
     }
 
-    private void showCategoryDetail(Category category) {
+    private void showCategoryDetail(Category category) { // 해당 카테고리를 선택했을 때 실행.
         while (true) {
             System.out.println("\n[ " + category.getCategoryName() + " 카테고리 ]");
             System.out.println("1. 전체 상품 보기");
@@ -92,7 +92,6 @@ public class CommerceSystem {
 
             List<Product> products = category.getProductList();
 
-            // [ ] 가격대별 상품 필터링 기능을 통한 스트림 활용
             if (menuChoice == 2) {
                 products = products.stream()
                         .filter(p -> Integer.parseInt(p.getPrice().replace(",", "")) <= 1000000)
@@ -126,7 +125,7 @@ public class CommerceSystem {
         }
     }
 
-    private void processAddToBasket(Product selected) {
+    private void processAddToBasket(Product selected) { // 장바구니 담기
         System.out.println("\n선택한 상품: " + selected.getName() + " | " + selected.getPrice() + "원");
         System.out.println("위 상품을 장바구니에 추가하시겠습니까?\n1. 확인        0. 취소");
         int action = scanner.nextInt();
@@ -144,7 +143,7 @@ public class CommerceSystem {
         }
     }
 
-    private void showBasket() {
+    private void showBasket() { // 장바구니 보기, 주문, 삭제
         while (true) {
             List<Product> productList = basket.getProductList();
             if (productList.isEmpty()) {
@@ -165,7 +164,6 @@ public class CommerceSystem {
                 executeOrder(productList);
                 return;
             } else if (choice == 2) {
-                // [ ] 장바구니에서 특정 상품 제거 기능 (Stream 활용)
                 System.out.print("제거할 상품명을 입력하세요: ");
                 String targetName = scanner.nextLine();
                 basket.removeProductStream(targetName);
@@ -175,7 +173,7 @@ public class CommerceSystem {
         }
     }
 
-    private void executeOrder(List<Product> productList) {
+    private void executeOrder(List<Product> productList) {          // 주문 할때 이메일 입력
         int totalOrderPrice = Integer.parseInt(basket.getTotalAmount().replace(",", ""));
 
         System.out.print("\n결제를 위해 이메일을 입력해주세요: ");
@@ -200,7 +198,6 @@ public class CommerceSystem {
         basket.clearBasket();
     }
 
-    // --- 기존 관리자 모드 메서드들 (생략 없이 유지) ---
     private void reQuestCancel() {
         basket.clearBasket();
         System.out.println("장바구니를 초기화했습니다.");
@@ -262,7 +259,7 @@ public class CommerceSystem {
                 0. 메인으로 돌아가기""");
     }
 
-    private void addProduct(Category category) {
+    private void addProduct(Category category) { // 어드민 상품 추가
         try {
             scanner.nextLine();
             System.out.println("\n[ " + category.getCategoryName() + " 카테고리 ]");
@@ -289,7 +286,7 @@ public class CommerceSystem {
         }
     }
 
-    private void fixProduct(Category category) {
+    private void fixProduct(Category category) { //어드민 상품 수정
         scanner.nextLine();
         System.out.print("수정할 상품명을 입력해주세요: ");
         String targetName = scanner.nextLine();
@@ -332,7 +329,7 @@ public class CommerceSystem {
     }
 
 
-    private void removeProduct(Category category) {
+    private void removeProduct(Category category) { // 어드민 상품 삭제
 
         List<Product> products = category.getProductList();
 
@@ -393,7 +390,7 @@ public class CommerceSystem {
         }
     }
 
-    private int categoryFinder() {
+    private int categoryFinder() { // 중복 코드가 많아서 생성함
         for (int i = 0; i < categories.size(); i++) {
             System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
         }
