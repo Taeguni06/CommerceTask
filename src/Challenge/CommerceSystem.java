@@ -54,7 +54,7 @@ public class CommerceSystem {
                     // 선택한 카테고리로 진입 (인덱스는 선택번호 - 1)
                     showCategoryDetail(categories.get(choice - 1));
                 } else if (choice == 6) {
-
+                    processCustomerEmail();
                 } else if (choice == 7) {
                     showBasket();
                 } else if (choice == 8) {
@@ -382,6 +382,42 @@ public class CommerceSystem {
         }
         System.out.print("입력: ");
         return scanner.nextInt() - 1;
+    }
+
+    private void processCustomerEmail() {
+        System.out.println("\n[ 할인 정보 조회 및 고객 등록 ]");
+        System.out.print("고객 이메일을 입력해주세요: ");
+        String email = scanner.nextLine();
+
+        // 1. 고객 조회 또는 신규 등록
+        if (!customerMap.containsKey(email)) {
+            customerMap.put(email, new Customer(email));
+            System.out.println("신규 고객으로 등록되었습니다.");
+        }
+
+        // 현재 세션의 고객을 해당 이메일 사용자로 설정
+        this.customer = customerMap.get(email);
+
+        // 2. 등급 정보 출력
+        CustomerGrade currentGrade = customer.getGrade();
+        NumberFormat nf = NumberFormat.getPercentInstance();
+
+        System.out.println("\n해당 유저는 " + currentGrade.name() + " 등급이므로 "
+                + nf.format(currentGrade.getDis()) + " 할인이 적용됩니다.");
+
+        // 3. 주문 여부 확인
+        System.out.println("장바구니로 이동하여 주문하시겠습니까?");
+        System.out.println("1. 장바구니 이동  2. 메인으로 돌아가기");
+        System.out.print("입력: ");
+
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // 버퍼 비우기
+
+        if (choice == 1) {
+            showBasket(); // 장바구니 메서드로 연결
+        } else {
+            System.out.println("메인 메뉴로 돌아갑니다.");
+        }
     }
 }
 

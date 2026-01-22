@@ -10,9 +10,10 @@ public class Customer {
     Customer () {
 
     }
-    public Customer(String mail, CustomerGrade grade) {
+    public Customer(String mail) {
         this.mail = mail;
-        this.grade = grade;
+        this.totalPrice = 0;
+        this.grade = CustomerGrade.BRONZE;
     }
 
     public String getName() {
