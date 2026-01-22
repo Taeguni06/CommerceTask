@@ -145,61 +145,41 @@ public class CommerceSystem {
         while (true) {
             List<Product> productList = basket.getProductList();
 
-
-            if (productList.isEmpty() || basket.getTotalAmount().equals("0")) {
+            if (productList.isEmpty()) {
                 System.out.println("\n장바구니가 비어있습니다.");
-                System.out.println("메인 메뉴로 돌아가려면 엔터를 누르세요.");
-                scanner.nextLine();
                 return;
             }
 
-            System.out.println("\n[ 장바구니 ]");
+            System.out.println("\n[ 장바구니 목록 ]");
             for (Product p : productList) {
-                System.out.println(p.getName() + " | " + p.getPrice() + "원 | " + basket.getVolume() + "개");
+                System.out.println("- " + p.getName() + " | " + p.getPrice() + "원 | " + basket.getVolume() + "개");
             }
-            System.out.println("\n현재 등급: " + customer.getGrade());
-            System.out.println("\n[ 총 주문 금액 ] " + basket.getTotalAmount() + "원");
-            System.out.println("\n1. 주문하기  |  0. 뒤로가기");
+
+            String rawAmount = basket.getTotalAmount().replace(",", "");
+            int totalOrderPrice = Integer.parseInt(rawAmount);
+
+            System.out.println("\n[ 총 결제 예정 금액 ] " + basket.getTotalAmount() + "원");
+            System.out.println("1. 주문하기  |  0. 뒤로가기");
             System.out.print("입력: ");
 
             int choice = scanner.nextInt();
             scanner.nextLine();
 
-            if (choice == 0) {
-                break;
-            } else if (choice == 1) {
-                // 재고 차감
+            if (choice == 1) {
+                // 재고 차감 및 누적 금액 업데이트
                 for (Product p : productList) {
                     p.setQuantity(p.getQuantity() - basket.getVolume());
                 }
+                customer.setTotalPrice(customer.getTotalPrice() + totalOrderPrice);
 
-                String rawAmount = basket.getTotalAmount().replace(",", ""); // 콤마 제거후 int 변환
-                int totalOrderPrice = Integer.parseInt(rawAmount);
-                customer.setTotalPrice(totalOrderPrice + customer.getTotalPrice());
-
-                NumberFormat nf = NumberFormat.getPercentInstance();
-                DecimalFormat dF = new DecimalFormat("#,###");
-                System.out.println("주문이 완료되었습니다!");
-                System.out.println("할인 전 금액: " + basket.getTotalAmount());
-                System.out.println(customer.getGrade().getGrade() +          // 등급 , 할인율, 할인 가격
-                        " 등급 할인(" +
-                        nf.format(customer.getGrade().getDis()) + "): -" +
-                        customer.getGrade().discount(totalOrderPrice));
-                System.out.println("최종 결제 금액: " + dF.format(totalOrderPrice - customer.getGrade().discount(totalOrderPrice)));
-
-//                System.out.println("\n[ 주문 완료 ]");
-//                System.out.println("주문 후 현재 등급: " + customer.getGrade());
-//                System.out.println("결제된 금액: " + dF.format(totalOrderPrice - customer.getGrade().discount(totalOrderPrice))); // 주문 사항 대로 수정
-//                System.out.println("누적 주문 금액: " + dF.format(customer.getTotalPrice()) + "원");
-
+                System.out.println("\n주문이 완료되었습니다!");
+                System.out.println("결제 금액: " + basket.getTotalAmount() + "원");
+                System.out.println("누적 주문 금액: " + customer.getTotalPrice() + "원");
 
                 basket.clearBasket();
-
-                System.out.println("메인 메뉴로 돌아가려면 엔터를 누르세요.");
-                scanner.nextLine();
                 return;
-            } else {
-                System.out.println("잘못된 입력입니다.");
+            } else if (choice == 0) {
+                break;
             }
         }
     }
@@ -385,38 +365,32 @@ public class CommerceSystem {
     }
 
     private void processCustomerEmail() {
-        System.out.println("\n[ 할인 정보 조회 및 고객 등록 ]");
-        System.out.print("고객 이메일을 입력해주세요: ");
+        System.out.println("\n[ 고객 이메일 입력 ]");
+        System.out.print("입력: ");
         String email = scanner.nextLine();
 
-        // 1. 고객 조회 또는 신규 등록
+        // 고객 조회 및 세션 설정
         if (!customerMap.containsKey(email)) {
             customerMap.put(email, new Customer(email));
-            System.out.println("신규 고객으로 등록되었습니다.");
         }
-
-        // 현재 세션의 고객을 해당 이메일 사용자로 설정
         this.customer = customerMap.get(email);
 
-        // 2. 등급 정보 출력
-        CustomerGrade currentGrade = customer.getGrade();
-        NumberFormat nf = NumberFormat.getPercentInstance();
+        // 등급 및 할인율 정보 제공
+        CustomerGrade grade = customer.getGrade();
+        double discountRate = grade.getDis() * 100; // 예: 0.1 -> 10
 
-        System.out.println("\n해당 유저는 " + currentGrade.name() + " 등급이므로 "
-                + nf.format(currentGrade.getDis()) + " 할인이 적용됩니다.");
+        System.out.println("\n해당 유저는 " + grade.name() + " 등급이므로 "
+                + (int)discountRate + "% 할인이 적용됩니다.");
 
-        // 3. 주문 여부 확인
-        System.out.println("장바구니로 이동하여 주문하시겠습니까?");
-        System.out.println("1. 장바구니 이동  2. 메인으로 돌아가기");
+        System.out.println("주문하시겠습니까?");
+        System.out.println("1. 주문 확정(장바구니 이동)  2. 메인으로 돌아가기");
         System.out.print("입력: ");
 
         int choice = scanner.nextInt();
-        scanner.nextLine(); // 버퍼 비우기
+        scanner.nextLine();
 
         if (choice == 1) {
-            showBasket(); // 장바구니 메서드로 연결
-        } else {
-            System.out.println("메인 메뉴로 돌아갑니다.");
+            showBasket();
         }
     }
 }
