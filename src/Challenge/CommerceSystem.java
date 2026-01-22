@@ -77,7 +77,7 @@ public class CommerceSystem {
             System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
         }
         System.out.println("\n[ 주문 관리 ]");
-        System.out.println("6. 이메일 생성 | 할인율 저장");
+        System.out.println("6. 로그인 및 회원가입 (이메일)");
         System.out.println("7. 장바구니      | 장바구니 보기");
         System.out.println("8. 주문 취소");
         System.out.println("\n9. 관리자 모드");
