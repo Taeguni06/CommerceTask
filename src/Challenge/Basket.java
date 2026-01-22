@@ -38,7 +38,7 @@ public class Basket {
 
     public void clearBasket() {
         products.clear();
-
+        totalAmount = 0;
         formatedTotalAmount = "0";
     }
 

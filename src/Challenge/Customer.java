@@ -1,12 +1,18 @@
 package Challenge;
 
 public class Customer {
-    String name;
-    String mail;
-    String account;
-    int totalPrice;
+    private String name;
+    private String mail;
+    private int totalPrice;
+    private CustomerGrade grade;
 
-    public Customer() {
+
+    Customer () {
+
+    }
+    public Customer(String mail, CustomerGrade grade) {
+        this.mail = mail;
+        this.grade = grade;
     }
 
     public String getName() {
@@ -25,12 +31,14 @@ public class Customer {
         this.mail = mail;
     }
 
-    public String getAccount() {
-        return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
+    public CustomerGrade getGrade() {
+        if (totalPrice >= 500_000 && totalPrice < 1_000_000) {
+            return CustomerGrade.SILVER;
+        } else if (totalPrice >= 1_000_000 && totalPrice < 2_000_000) {
+            return CustomerGrade.GOLD;
+        } else if (totalPrice > 2000000) {
+            return CustomerGrade.PLATINUM;
+        } else return CustomerGrade.BRONZE;
     }
 
     public int getTotalPrice() {

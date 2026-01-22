@@ -1,9 +1,8 @@
 package Challenge;
 
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
 
 import static Challenge.CategoryType.*;
 
@@ -12,7 +11,8 @@ public class CommerceSystem {
     private Scanner scanner;
     private List<Category> categories;
     private Basket basket = new Basket();
-    Customer customer = new Customer();
+    private Customer customer = new Customer();
+    private Map<String, Customer> customerMap = new HashMap<>();
 
 
     CommerceSystem() {
@@ -53,6 +53,8 @@ public class CommerceSystem {
                 } else if (choice > 0 && choice <= categories.size()) {
                     // 선택한 카테고리로 진입 (인덱스는 선택번호 - 1)
                     showCategoryDetail(categories.get(choice - 1));
+                } else if (choice == 6) {
+
                 } else if (choice == 7) {
                     showBasket();
                 } else if (choice == 8) {
@@ -75,6 +77,7 @@ public class CommerceSystem {
             System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
         }
         System.out.println("\n[ 주문 관리 ]");
+        System.out.println("6. 이메일 생성 | 할인율 저장");
         System.out.println("7. 장바구니      | 장바구니 보기");
         System.out.println("8. 주문 취소");
         System.out.println("\n9. 관리자 모드");
@@ -121,11 +124,15 @@ public class CommerceSystem {
                             basket.addProduct(selected);
                             basket.totalAmount(selected);
                             System.out.println(selected.getName() + "\n가 " + basket.getVolume() + "개가 장바구니에 추가되었습니다.");
-                        } else System.out.println("재고가 부족합니다.");
+                        } else {
+                            System.out.println("재고가 부족합니다.");
+                        }
+                        break;
                     case 0:
                         break;
                     default:
                         System.out.println("잘못된 입력입니다.");
+                        break;
                 }
 
             } else {
@@ -135,34 +142,62 @@ public class CommerceSystem {
     }
 
     private void showBasket() {
-        System.out.println("\n[ 장바구니 ]");
         while (true) {
             List<Product> productList = basket.getProductList();
-            if (basket.getTotalAmount().equals("0")) {
-                System.out.println("장바구니가 비어있습니다.");
-                break;
-            } else {
-                for (Product p : productList) {
-                    System.out.println(p.getName() + " | " + p.getPrice() + "원 | " + p.getDetail() + " | " + basket.getVolume() + "개");
-                }
+
+
+            if (productList.isEmpty() || basket.getTotalAmount().equals("0")) {
+                System.out.println("\n장바구니가 비어있습니다.");
+                System.out.println("메인 메뉴로 돌아가려면 엔터를 누르세요.");
+                scanner.nextLine();
+                return;
             }
-            System.out.println("[ 총 주문 금액 ]\n" + basket.getTotalAmount() + "원");
 
-            System.out.println("1. 주문하기");
-
-            System.out.println("0. 뒤로가기");
+            System.out.println("\n[ 장바구니 ]");
+            for (Product p : productList) {
+                System.out.println(p.getName() + " | " + p.getPrice() + "원 | " + basket.getVolume() + "개");
+            }
+            System.out.println("\n현재 등급: " + customer.getGrade());
+            System.out.println("\n[ 총 주문 금액 ] " + basket.getTotalAmount() + "원");
+            System.out.println("\n1. 주문하기  |  0. 뒤로가기");
             System.out.print("입력: ");
+
             int choice = scanner.nextInt();
+            scanner.nextLine();
+
             if (choice == 0) {
                 break;
             } else if (choice == 1) {
+                // 재고 차감
                 for (Product p : productList) {
                     p.setQuantity(p.getQuantity() - basket.getVolume());
-                    basket.clearBasket();
-                    System.out.println("주문 완료되었습니다.");
-                    break;
                 }
-                break;
+
+                String rawAmount = basket.getTotalAmount().replace(",", ""); // 콤마 제거후 int 변환
+                int totalOrderPrice = Integer.parseInt(rawAmount);
+                customer.setTotalPrice(totalOrderPrice + customer.getTotalPrice());
+
+                NumberFormat nf = NumberFormat.getPercentInstance();
+                DecimalFormat dF = new DecimalFormat("#,###");
+                System.out.println("주문이 완료되었습니다!");
+                System.out.println("할인 전 금액: " + basket.getTotalAmount());
+                System.out.println(customer.getGrade().getGrade() +          // 등급 , 할인율, 할인 가격
+                        " 등급 할인(" +
+                        nf.format(customer.getGrade().getDis()) + "): -" +
+                        customer.getGrade().discount(totalOrderPrice));
+                System.out.println("최종 결제 금액: " + dF.format(totalOrderPrice - customer.getGrade().discount(totalOrderPrice)));
+
+//                System.out.println("\n[ 주문 완료 ]");
+//                System.out.println("주문 후 현재 등급: " + customer.getGrade());
+//                System.out.println("결제된 금액: " + dF.format(totalOrderPrice - customer.getGrade().discount(totalOrderPrice))); // 주문 사항 대로 수정
+//                System.out.println("누적 주문 금액: " + dF.format(customer.getTotalPrice()) + "원");
+
+
+                basket.clearBasket();
+
+                System.out.println("메인 메뉴로 돌아가려면 엔터를 누르세요.");
+                scanner.nextLine();
+                return;
             } else {
                 System.out.println("잘못된 입력입니다.");
             }
@@ -250,8 +285,7 @@ public class CommerceSystem {
 
             category.addProduct(new Product(name, price, detail, quantity));
             System.out.println(name + " 상품이 " + category.getCategoryName() + "카테고리에 추가되었습니다.");
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("잘못된 입력입니다.");
             scanner.next();
         }
@@ -341,6 +375,7 @@ public class CommerceSystem {
             }
         }
     }
+
     private int categoryFinder() {
         for (int i = 0; i < categories.size(); i++) {
             System.out.println((i + 1) + ". " + categories.get(i).getCategoryName());
